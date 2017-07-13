@@ -1,3 +1,24 @@
+/*
+
+Implements the dhash algorithm from http://archive.is/NFLVW
+
+dhash is an image hashing algorithm that generates a unique
+signature from an image's gradients.
+
+The image is first grayscaled to reduce every RGB pixel set to the same value.
+Then, it is resized down to 'hashLen' size, with one of the sides 1px 
+larger than the other (the width for horizontalGradient(), and the 
+height for verticalGradient()).
+Finally, the gradient difference is calculated. If the current pixel is
+less than the next one, a '1' is appended to the BitArray. Otherwise,
+a '0' is appended.
+
+Dhash() returns the concatenated result of horizontalGradient() & verticalGradient()
+DhashHorizontal() performs only a horizontal gradient diff
+DhashVertical() performs only a vertical gradient diff
+
+*/
+
 package imagehash
 
 import (
@@ -7,6 +28,7 @@ import (
 )
 
 
+// Returns the concatenated result of horizontalGradient() & verticalGradient()
 func Dhash(img image.Image, hashLen int) ([]byte, error) {
   imgGray := imaging.Grayscale(img) // Grayscale image first for performance
 
@@ -14,17 +36,15 @@ func Dhash(img image.Image, hashLen int) ([]byte, error) {
   horiz, err1 := horizontalGradient(imgGray, hashLen)
   vert, err2 := verticalGradient(imgGray, hashLen)
 
-  if err1 != nil {
-    return nil, err1
-  } else if err2 != nil {
-    return nil, err2
-  }
+  if err1 != nil { return nil, err1 } 
+  if err2 != nil { return nil, err2 }
 
-  // Return the horizontal hash with the vertical one appended
+  // Return the concatenated horizontal and vertical hash
   return append(horiz, vert...), nil
 }
 
 
+// Returns the result of a horizontal gradient diff
 func DhashHorizontal(img image.Image, hashLen int) ([]byte, error) {
   imgGray := imaging.Grayscale(img) // Grayscale image first
   horiz, err := horizontalGradient(imgGray, hashLen) // horizontal diff gradient
@@ -32,6 +52,7 @@ func DhashHorizontal(img image.Image, hashLen int) ([]byte, error) {
 }
 
 
+// Returns the result of a vertical gradient diff
 func DhashVertical(img image.Image, hashLen int) ([]byte, error) {
   imgGray := imaging.Grayscale(img) // Grayscale image first
   horiz, err := verticalGradient(imgGray, hashLen) // horizontal diff gradient
@@ -39,6 +60,7 @@ func DhashVertical(img image.Image, hashLen int) ([]byte, error) {
 }
 
 
+// Performs a horizontal gradient diff on a grayscaled image
 func horizontalGradient(img image.Image, hashLen int) ([]byte, error) {
   // Width and height of the scaled-down image
   width, height := hashLen + 1, hashLen
@@ -74,11 +96,12 @@ func horizontalGradient(img image.Image, hashLen int) ([]byte, error) {
 }
 
 
+// Performs a vertical gradient diff on a grayscaled image
 func verticalGradient(img image.Image, hashLen int) ([]byte, error) {
   // Width and height of the scaled-down image
   width, height := hashLen, hashLen + 1
 
-  // Downscale the image by 'hashLen' amount for a horizonal diff.
+  // Downscale the image by 'hashLen' amount for a vertical diff.
   res := imaging.Resize(img, width, height, imaging.Lanczos)
 
   // Create a new bitArray
@@ -87,7 +110,7 @@ func verticalGradient(img image.Image, hashLen int) ([]byte, error) {
 
   var prev uint32 // Variable to store the previous pixel value
 
-  // Calculate the horizonal gradient difference
+  // Calculate the vertical gradient difference
   for x := 0; x < width; x++ {
     for y := 0; y < height; y++ {
       // Since the image is grayscaled, r = g = b
