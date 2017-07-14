@@ -31,7 +31,7 @@ func main() {
   // The length of a downscaled side. It must be > 8, and
   // (hashLen * hashLen) must be a multiple of 8
   //
-  // A value of 8 will return 64 bits, or 16 bytes / hex characters
+  // A value of 8 will return 64 bits, or 8 bytes / 16 hex characters
   // (64 bits = 8 bits length * 8 bits width)
   hashLen := 8
 
