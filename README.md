@@ -37,7 +37,8 @@ func main() {
 
   // Calculate both horizontal and vertical diffs, then concatenate
   // and return them as: <horizontal diff><vertical diff>
-  if hash,err := imagehash.Dhash(src, hashLen); err != nil {
+  hash,err := imagehash.Dhash(src, hashLen)
+  if err != nil {
     // Catch any error
   }
   fmt.Println("dhash:", hex.EncodeToString(hash))
@@ -53,6 +54,7 @@ func main() {
 }
 ```
 <br>
+
 The Hamming distance between two byte arrays can be determined using a package like [hamming](https://github.com/steakknife/hamming):
 
 ```go
@@ -67,11 +69,12 @@ import (
 
 func main() {
   src1,_ := imagehash.OpenImg("lena_512.png")
-  src2,_ := imagehash.OpenImg("lena_512.png")
+  src2,_ := imagehash.OpenImg("lena_inverted_512.png")
   hash1,_ := imagehash.Dhash(src1, 8)
   hash2,_ := imagehash.Dhash(src2, 8)
 
-  fmt.Println("The Hamming distance between", hamming.Bytes(hash1, hash2))
+  fmt.Println("The Hamming distance between lena_512.png & lena_inverted_512.png:",
+    hamming.Bytes(hash1, hash2))
 }
 ```
 
@@ -96,3 +99,6 @@ Which can also be represented in hex as: `7670795b33135a38`
 <br>
 
 Conversely, to obtain a vertical diff, the image would be scaled down to `8x9px`, where the diff is `pixel[y] < pixel[y+1]`.
+
+### Dependencies:
+* [imaging](https://github.com/disintegration/imaging): Simple Go image processing package
