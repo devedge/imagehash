@@ -6,8 +6,8 @@ dhash is an image hashing algorithm that generates a unique
 signature from an image's gradients.
 
 The image is first grayscaled to reduce every RGB pixel set to the same value.
-Then, it is resized down to 'hashLen' size, with one of the sides 1px 
-larger than the other (the width for horizontalGradient(), and the 
+Then, it is resized down to 'hashLen' size, with one of the sides 1px
+larger than the other (the width for horizontalGradient(), and the
 height for verticalGradient()).
 Finally, the gradient difference is calculated. If the current pixel is
 less than the next one, a '1' is appended to the BitArray. Otherwise,
@@ -17,18 +17,20 @@ Dhash() returns the concatenated result of horizontalGradient() & verticalGradie
 DhashHorizontal() performs only a horizontal gradient diff
 DhashVertical() performs only a vertical gradient diff
 
+TODO consider changing hashLen to reflect the length of the hash,
+  instead of the length of the downscaled image
+
 */
 
 package imagehash
 
 import (
   "image"
-  "./bitarray"
   "github.com/disintegration/imaging"
 )
 
 
-// Returns the concatenated result of horizontalGradient() & verticalGradient()
+// Dhash returns the concatenated result of horizontalGradient() & verticalGradient()
 func Dhash(img image.Image, hashLen int) ([]byte, error) {
   imgGray := imaging.Grayscale(img) // Grayscale image first for performance
 
@@ -36,7 +38,7 @@ func Dhash(img image.Image, hashLen int) ([]byte, error) {
   horiz, err1 := horizontalGradient(imgGray, hashLen)
   vert, err2 := verticalGradient(imgGray, hashLen)
 
-  if err1 != nil { return nil, err1 } 
+  if err1 != nil { return nil, err1 }
   if err2 != nil { return nil, err2 }
 
   // Return the concatenated horizontal and vertical hash
@@ -44,23 +46,21 @@ func Dhash(img image.Image, hashLen int) ([]byte, error) {
 }
 
 
-// Returns the result of a horizontal gradient diff
+// DhashHorizontal returns the result of a horizontal gradient diff
 func DhashHorizontal(img image.Image, hashLen int) ([]byte, error) {
   imgGray := imaging.Grayscale(img) // Grayscale image first
-  horiz, err := horizontalGradient(imgGray, hashLen) // horizontal diff gradient
-  return horiz, err
+  return horizontalGradient(imgGray, hashLen) // horizontal diff gradient
 }
 
 
-// Returns the result of a vertical gradient diff
+// DhashVertical returns the result of a vertical gradient diff
 func DhashVertical(img image.Image, hashLen int) ([]byte, error) {
   imgGray := imaging.Grayscale(img) // Grayscale image first
-  horiz, err := verticalGradient(imgGray, hashLen) // horizontal diff gradient
-  return horiz, err
+  return verticalGradient(imgGray, hashLen) // vertical diff gradient
 }
 
 
-// Performs a horizontal gradient diff on a grayscaled image
+// horizontalGradient performs a horizontal gradient diff on a grayscaled image
 func horizontalGradient(img image.Image, hashLen int) ([]byte, error) {
   // Width and height of the scaled-down image
   width, height := hashLen + 1, hashLen
@@ -69,7 +69,7 @@ func horizontalGradient(img image.Image, hashLen int) ([]byte, error) {
   res := imaging.Resize(img, width, height, imaging.Lanczos)
 
   // Create a new bitArray
-  bitArray,err := bitarray.NewBitArray(hashLen * hashLen)
+  bitArray,err := NewBitArray(hashLen * hashLen)
   if err != nil { return nil, err }
 
   var prev uint32 // Variable to store the previous pixel value
@@ -96,7 +96,7 @@ func horizontalGradient(img image.Image, hashLen int) ([]byte, error) {
 }
 
 
-// Performs a vertical gradient diff on a grayscaled image
+// verticalGradient performs a vertical gradient diff on a grayscaled image
 func verticalGradient(img image.Image, hashLen int) ([]byte, error) {
   // Width and height of the scaled-down image
   width, height := hashLen, hashLen + 1
@@ -105,7 +105,7 @@ func verticalGradient(img image.Image, hashLen int) ([]byte, error) {
   res := imaging.Resize(img, width, height, imaging.Lanczos)
 
   // Create a new bitArray
-  bitArray,err := bitarray.NewBitArray(hashLen * hashLen)
+  bitArray,err := NewBitArray(hashLen * hashLen)
   if err != nil { return nil, err }
 
   var prev uint32 // Variable to store the previous pixel value

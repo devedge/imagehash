@@ -21,6 +21,5 @@ import (
 // Open() opens & encodes an image from the filesystem, which dhash() is
 // based upon.
 func OpenImg(fp string) (image.Image, error) {
-  file,err := imaging.Open(fp)
-  return file,err
+  return imaging.Open(fp)
 }
