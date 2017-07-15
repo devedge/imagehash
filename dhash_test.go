@@ -1,3 +1,20 @@
+/*
+
+Testing suite for the dhash algorithm. This tests:
+
+1.
+2.
+3.
+4.
+5.
+6.
+7.
+8.
+9.
+10.
+
+*/
+
 package imagehash
 
 import (
@@ -50,9 +67,9 @@ func TestWhiteDhashVertical(t *testing.T)  {
 
 
 // Test passing in an invalid hashLen. The result of hashLen * hashLen must
-// be a multiple of 8, and non-zero
-
-
+// be a multiple of 8, and non-zero.
+// (These three following tests only check 0, since bitarray_test.go cover
+// all other cases)
 func TestDhashZeroHashLen(t *testing.T) {
   src,_ := OpenImg("./testdata/white_512.png")
   _,err := Dhash(src, 0)
@@ -61,7 +78,6 @@ func TestDhashZeroHashLen(t *testing.T) {
     t.Errorf("zero dhash hashLen didn't fail")
   }
 }
-
 func TestDhashHorizontalZeroHashLen(t *testing.T) {
   src,_ := OpenImg("./testdata/white_512.png")
   _,err := DhashHorizontal(src, 0)
@@ -70,12 +86,44 @@ func TestDhashHorizontalZeroHashLen(t *testing.T) {
     t.Errorf("zero horizontal dhash hashLen didn't fail")
   }
 }
-
 func TestDhashVerticalZeroHashLen(t *testing.T) {
   src,_ := OpenImg("./testdata/white_512.png")
   _,err := DhashVertical(src, 0)
 
   if err == nil {
     t.Errorf("zero vertical dhash hashLen didn't fail")
+  }
+}
+
+
+// Test that the lena_512.png image returns the expected result.
+// The value of 'exp' has already been manually computed for the
+// horizontal gradient.
+func TestLenaHash(t *testing.T) {
+  src,_ := OpenImg("./testdata/lena_512.png")
+  hash,err := DhashHorizontal(src, 8)
+  exp := []byte{0x76, 0x70, 0x79, 0x5b, 0x33, 0x13, 0x5a, 0x38}
+
+  if bytes.Compare(exp, hash) != 0 {
+    t.Errorf("basic lena_512 dhash test [%x] failed: [%x]", exp, hash)
+  } else if err != nil {
+    t.Errorf("basic lena_512 dhash test failed with error:", err)
+  }
+}
+
+
+// Test that lena_512.png and lena_256.png return identical dhash results.
+func TestSimilarLenaDash(t *testing.T)  {
+  lena512,_ := OpenImg("./testdata/lena_512.png")
+  lena256,_ := OpenImg("./testdata/lena_256.png")
+  hashlena512,err1 := Dhash(lena512, 8)
+  hashlena256,err2 := Dhash(lena256, 8)
+
+  if bytes.Compare(hashlena512, hashlena256) != 0 {
+    t.Errorf("similar lena dhash test [%x] failed: [%x]", hashlena512, hashlena256)
+  } else if err1 != nil {
+    t.Errorf("similar lena dhash test failed with error:", err1)
+  } else if err2 != nil {
+    t.Errorf("similar lena dhash test failed with error:", err2)
   }
 }

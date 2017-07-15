@@ -19,6 +19,13 @@ DhashVertical() performs only a vertical gradient diff
 
 TODO consider changing hashLen to reflect the length of the hash,
   instead of the length of the downscaled image
+TODO test that simliar images return similar hashes
+TODO Ensure Godoc is correct. BitArray is usually private
+TODO Add travis.yml file
+TODO then, tag as version 1.0
+TODO Phash? Every new package gets a branch until testing is done
+
+go test -v -covermode=count
 
 */
 
@@ -116,7 +123,7 @@ func verticalGradient(img image.Image, hashLen int) ([]byte, error) {
       // Since the image is grayscaled, r = g = b
       r,_,_,_ := res.At(x,y).RGBA() // Get the pixel at (x,y)
 
-      // If this is not the first value of the current row, then
+      // If this is not the first value of the current column, then
       // compare the gradient difference from the previous one
       if y > 0 {
         if prev < r {
