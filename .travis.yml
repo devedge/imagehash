@@ -1,0 +1,16 @@
+language: go
+
+go:
+  - 1.2
+  - 1.3
+  - 1.4
+  - 1.5
+  - 1.6
+  - 1.7
+  - 1.8
+
+install:
+  - go get github.com/disintegration/imaging
+
+script:
+  - go test -v -covermode=count -coverprofile=coverage.out

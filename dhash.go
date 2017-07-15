@@ -17,7 +17,7 @@ Dhash() returns the concatenated result of horizontalGradient() & verticalGradie
 DhashHorizontal() performs only a horizontal gradient diff
 DhashVertical() performs only a vertical gradient diff
 
-TODO consider changing hashLen to reflect the length of the hash,
+TODO: consider changing hashLen to reflect the length of the hash,
   instead of the length of the downscaled image
 TODO Add travis.yml file
 TODO then, tag as version 1.0
