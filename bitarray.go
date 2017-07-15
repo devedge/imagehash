@@ -1,10 +1,13 @@
 /*
 
-This module implements a 'bit array', where bits can be added
-to a byte array one by one.
-This speeds up and simplifies creating a binary signature for
-an image, which can later be represented as a hex string using:
-  hex.EncodeToString(imagehash)
+This is an internal module to simplify adding bits one at a
+time to a byte array. It is used by the dhash algorithm, where
+the byte array can later be transformed into its hex representation.
+
+Example usage:
+  bitArray,err := NewBitArray(32)
+  bitArray.AppendBit(1)
+  fmt.Println(bitArray.GetArray())
 
 */
 
@@ -16,7 +19,7 @@ import (
 )
 
 
-// Struct to simplify appending bits to a byte array,
+// BitArray is a struct to simplify appending bits to a byte array,
 // from left to right
 type BitArray struct {
   byteArray []byte
@@ -28,17 +31,9 @@ type BitArray struct {
 }
 
 
-/**
- * Constructor for the BitArray struct. It must be initialized
- * with a non-zero int that is a multiple of 8.
- * Usage:
- *    bitArray,err := bitops.NewBitArray(64)
- *
- * @method NewBitArray
- * @param  {int}        numBits The number of bits, as an int
- * @return {BitArray}   The AppendBit struct
- * @return {error}      If there is an error
- */
+// NewBitArray is a constructor function for the BitArray struct.
+// The input, 'numBits' is the number of bits this byte array will
+// hold, so it must be a non-zero multiple of 8.
 func NewBitArray(numBits int) (*BitArray, error) {
   // If numBits is invalid
   if (numBits == 0) || (numBits % 8 != 0) {
@@ -56,15 +51,12 @@ func NewBitArray(numBits int) (*BitArray, error) {
 }
 
 
-/**
- * Append a bit to the byte array from left to right
- * @method AppendBit
- * @param  {int} bit  Append a one with '1', and zero with '0'
- * @return error      An error, if any occured
- */
+// AppendBit appends a 1 or a 0 to the byte array in the BitArray struct.
+// Valid input is an int of '1' or '0', and this function cannot be called
+// after the byte array has filled up.
 func (ab *BitArray) AppendBit(bit int) error {
   if ab.arrayIdx == ab.max {
-    return errors.New("cannot contine to append to a full byte array")
+    return errors.New("cannot continue to append to a full byte array")
   }
 
   // Shift the 'mask' (bit of 1 or 0) by the proper amount to
@@ -80,7 +72,7 @@ func (ab *BitArray) AppendBit(bit int) error {
 
   if ab.bitIdx > 0 {
     // Decrement the index into the current byte so the next
-    // bit to be set will be on the right.
+    // bit to set will be on the right.
     ab.bitIdx--
   } else {
     // The last bit in the current byte has been set, so increment
@@ -93,11 +85,8 @@ func (ab *BitArray) AppendBit(bit int) error {
 }
 
 
-/**
- * Returns the current byte array
- * @method getArray
- * @return {[]byte]}  The current byte array
- */
+// GetArray returns the byte array in its current state. It
+// can be called at any time.
 func (ab BitArray) GetArray() []byte {
   return ab.byteArray
 }
