@@ -1,7 +1,7 @@
 # imagehash
 [![Build Status](https://travis-ci.org/devedge/imagehash.svg?branch=master)](https://travis-ci.org/devedge/imagehash)
 [![GoDoc](https://godoc.org/github.com/devedge/imagehash?status.svg)](https://godoc.org/github.com/devedge/imagehash)
-![Coverage](https://img.shields.io/badge/coverage-98.3%-brightgreen.svg)
+[![Coverage](https://img.shields.io/badge/coverage-98.3-brightgreen.svg)](https://gocover.io/github.com/devedge/imagehash)
 
 Golang implementation of image hashing algorithms
 
