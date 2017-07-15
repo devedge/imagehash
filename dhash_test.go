@@ -1,17 +1,15 @@
 /*
 
-Testing suite for the dhash algorithm. This tests:
+Testing suite for the dhash algorithm.
 
-1.
-2.
-3.
-4.
-5.
-6.
-7.
-8.
-9.
-10.
+1. Test the white dhash
+2. Test the white horizontal dhash
+3. Test the white vertical dhash
+4. Test an invalid dhash length
+5. Test an invalid horizontal dhash length
+6. Test an invalid vertical dhash length
+7. Test that the dhash of lena_512 matches the precomputed one
+8. Test that the dhash of a 512px image and 256px image are identical
 
 */
 

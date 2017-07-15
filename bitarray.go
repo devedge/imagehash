@@ -19,8 +19,8 @@ import (
 )
 
 
-// BitArray is a struct to simplify appending bits to a byte array,
-// from left to right
+// BitArray is an internal struct used by dhash to simplify appending bits to
+// a byte array from left to right. 
 type BitArray struct {
   byteArray []byte
   max int

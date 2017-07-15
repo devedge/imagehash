@@ -80,8 +80,7 @@ func main() {
   // Hamming distance of 0, since the images are simply different sizes
   fmt.Println("'lena_512.png' dhash:", hex.EncodeToString(hash512))
   fmt.Println("'lena_256.png' dhash:", hex.EncodeToString(hash256))
-  fmt.Println("The Hamming distance between these:",
-    hamming.Bytes(hash512, hash256))
+  fmt.Println("The Hamming distance between these:", hamming.Bytes(hash512, hash256))
 
   fmt.Println()
 
@@ -89,8 +88,7 @@ func main() {
   // different gradient colorscheme
   fmt.Println("'lena_512.png' dhash:         ", hex.EncodeToString(hash512))
   fmt.Println("'lena_inverted_512.png' dhash:", hex.EncodeToString(hashInv))
-  fmt.Println("The Hamming distance between these:",
-    hamming.Bytes(hash512, hashInv))
+  fmt.Println("The Hamming distance between these:", hamming.Bytes(hash512, hashInv))
 }
 ```
 
@@ -114,7 +112,7 @@ This array of 1s and 0s is then flattened, and returned as a byte array: <br>
 Which can also be represented in hex as `7670795b33135a38` using `hex.EncodeToString(result)`
 <br>
 
-Conversely, to obtain a vertical diff, the image would be scaled down to `8x9px`, where the diff is `pixel[y] < pixel[y+1]`.
+Conversely, to obtain a vertical diff, the image would be scaled down to `8x9px`, and the diff matrix would be the result of `pixel[y] < pixel[y+1]`.
 
-### Dependencies:
-* [imaging](https://github.com/disintegration/imaging): Simple Go image processing package
+#### Dependencies:
+* [imaging](https://github.com/disintegration/imaging) - Simple Go image processing package

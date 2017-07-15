@@ -19,8 +19,6 @@ DhashVertical() performs only a vertical gradient diff
 
 TODO consider changing hashLen to reflect the length of the hash,
   instead of the length of the downscaled image
-TODO test that simliar images return similar hashes
-TODO Ensure Godoc is correct. BitArray is usually private
 TODO Add travis.yml file
 TODO then, tag as version 1.0
 TODO Phash? Every new package gets a branch until testing is done
@@ -37,7 +35,10 @@ import (
 )
 
 
-// Dhash returns the concatenated result of horizontalGradient() & verticalGradient()
+// Dhash calculates the horizontal and vertical gradient hashes seperately, then
+// concatenates then to return one result as: <horizontal><vertical>
+// 'img' is an Image object returned by opening an image file using OpenImg().
+// 'hashLen' is the size that the image will be shrunk to. It must be a non-zero multiple of 8.
 func Dhash(img image.Image, hashLen int) ([]byte, error) {
   imgGray := imaging.Grayscale(img) // Grayscale image first for performance
 
@@ -53,14 +54,18 @@ func Dhash(img image.Image, hashLen int) ([]byte, error) {
 }
 
 
-// DhashHorizontal returns the result of a horizontal gradient diff
+// DhashHorizontal returns the result of a horizontal gradient hash.
+// 'img' is an Image object returned by opening an image file using OpenImg().
+// 'hashLen' is the size that the image will be shrunk to. It must be a non-zero multiple of 8.
 func DhashHorizontal(img image.Image, hashLen int) ([]byte, error) {
   imgGray := imaging.Grayscale(img) // Grayscale image first
   return horizontalGradient(imgGray, hashLen) // horizontal diff gradient
 }
 
 
-// DhashVertical returns the result of a vertical gradient diff
+// DhashVertical returns the result of a vertical gradient hash.
+// 'img' is an Image object returned by opening an image file using OpenImg().
+// 'hashLen' is the size that the image will be shrunk to. It must be a non-zero multiple of 8.
 func DhashVertical(img image.Image, hashLen int) ([]byte, error) {
   imgGray := imaging.Grayscale(img) // Grayscale image first
   return verticalGradient(imgGray, hashLen) // vertical diff gradient
