@@ -36,7 +36,7 @@ import (
 
 
 // Dhash calculates the horizontal and vertical gradient hashes seperately, then
-// concatenates then to return one result as: <horizontal><vertical>
+// concatenates then to return one result as: <horizontal><vertical>.
 // 'img' is an Image object returned by opening an image file using OpenImg().
 // 'hashLen' is the size that the image will be shrunk to. It must be a non-zero multiple of 8.
 func Dhash(img image.Image, hashLen int) ([]byte, error) {
