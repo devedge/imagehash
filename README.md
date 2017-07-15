@@ -8,6 +8,7 @@ It depends on the `imaging` Go package [found here](https://github.com/disintegr
 
 
 The `dhash` algorithm generates a nearly unique signature for an image, based on the gradient difference between pixels.
+It is used to determine the similarity between two images. Similar images will have a nearly identical hash result, while different images will not.
 
 #### Install:
 
@@ -26,7 +27,7 @@ import (
 
 func main() {
   // OpenImg() uses the image opening function found in 'imaging'
-  src,_ := imagehash.OpenImg("lena_512.png")
+  src,_ := imagehash.OpenImg("./testdata/lena_512.png")
 
   // The length of a downscaled side. It must be > 8, and
   // (hashLen * hashLen) must be a multiple of 8
@@ -39,9 +40,9 @@ func main() {
   // and return them as: <horizontal diff><vertical diff>
   hash,err := imagehash.Dhash(src, hashLen)
   if err != nil {
-    // Catch any error
+    // Catch an error that may be thrown
   }
-  fmt.Println("dhash:", hex.EncodeToString(hash))
+  fmt.Println("dhash:           ", hex.EncodeToString(hash))
 
   // Calculate a horizontal gradient diff. 'src' is an 'image.Image'
   // The returned value is of type []byte
@@ -50,7 +51,7 @@ func main() {
 
   // Calculate a vertical gradient diff
   hashV,_ := imagehash.DhashVertical(src, hashLen)
-  fmt.Println("Vertical dhash:", hex.EncodeToString(hashV))
+  fmt.Println("Vertical dhash:  ", hex.EncodeToString(hashV))
 }
 ```
 <br>
@@ -68,13 +69,28 @@ import (
 )
 
 func main() {
-  src1,_ := imagehash.OpenImg("lena_512.png")
-  src2,_ := imagehash.OpenImg("lena_inverted_512.png")
-  hash1,_ := imagehash.Dhash(src1, 8)
-  hash2,_ := imagehash.Dhash(src2, 8)
+  src512,_ := imagehash.OpenImg("./testdata/lena_512.png")
+  src256,_ := imagehash.OpenImg("./testdata/lena_256.png")
+  srcInv,_ := imagehash.OpenImg("./testdata/lena_inverted_512.png")
 
-  fmt.Println("The Hamming distance between lena_512.png & lena_inverted_512.png:",
-    hamming.Bytes(hash1, hash2))
+  hash512,_ := imagehash.Dhash(src512, 8)
+  hash256,_ := imagehash.Dhash(src256, 8)
+  hashInv,_ := imagehash.Dhash(srcInv, 8)
+
+  // Hamming distance of 0, since the images are simply different sizes
+  fmt.Println("'lena_512.png' dhash:", hex.EncodeToString(hash512))
+  fmt.Println("'lena_256.png' dhash:", hex.EncodeToString(hash256))
+  fmt.Println("The Hamming distance between these:",
+    hamming.Bytes(hash512, hash256))
+
+  fmt.Println()
+
+  // Completely different dhash, since an inverted image has a completely
+  // different gradient colorscheme
+  fmt.Println("'lena_512.png' dhash:         ", hex.EncodeToString(hash512))
+  fmt.Println("'lena_inverted_512.png' dhash:", hex.EncodeToString(hashInv))
+  fmt.Println("The Hamming distance between these:",
+    hamming.Bytes(hash512, hashInv))
 }
 ```
 
@@ -95,7 +111,7 @@ In this example, `hashLen = 8`, so the image is scaled down to `9x8px`. Then, if
 This array of 1s and 0s is then flattened, and returned as a byte array: <br>
 `0111011001110000011110010101101100110011000100110101101000111000`
 
-Which can also be represented in hex as: `7670795b33135a38`
+Which can also be represented in hex as `7670795b33135a38` using `hex.EncodeToString(result)`
 <br>
 
 Conversely, to obtain a vertical diff, the image would be scaled down to `8x9px`, where the diff is `pixel[y] < pixel[y+1]`.
