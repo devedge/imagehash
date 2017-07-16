@@ -14,7 +14,7 @@ import (
 
 // Ahash calculates the average hash of an image. The image is first grayscaled,
 // then scaled down to "hashLen" for width and height. Then, the average value
-// of the pixels is computed, and if pixel is above the average, a 1 is appended
+// of the pixels is computed, and if a pixel is above the average, a 1 is appended
 // to the byte array; a 0 otherwise.
 func Ahash(img image.Image, hashLen int) ([]byte, error) {
   var sum uint32                        // Sum of the pixels
@@ -32,8 +32,8 @@ func Ahash(img image.Image, hashLen int) ([]byte, error) {
 
   // Iterate over every pixel to generate the sum.
   // Additionally, store every pixel into an array for faster re-computation
-  for x := 0; x < 8; x++ {
-    for y := 0; y < 8; y++ {
+  for x := 0; x < hashLen; x++ {
+    for y := 0; y < hashLen; y++ {
       r,_,_,_ := res.At(x,y).RGBA()       // r = g = b since the image is grayscaled
       sum += r                            // increment the sum
       pixelArray = append(pixelArray, r)  // append the pixel
