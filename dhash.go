@@ -13,15 +13,10 @@ Finally, the gradient difference is calculated. If the current pixel is
 less than the next one, a '1' is appended to the BitArray. Otherwise,
 a '0' is appended.
 
-Dhash() returns the concatenated result of horizontalGradient() & verticalGradient()
-DhashHorizontal() performs only a horizontal gradient diff
-DhashVertical() performs only a vertical gradient diff
-
 TODO: consider changing hashLen to reflect the length of the hash,
   instead of the length of the downscaled image
 TODO Phash? Every new package gets a branch until testing is done
-
-go test -v -covermode=count
+TODO Benchmarks for every algorithm
 
 */
 

@@ -1,6 +1,13 @@
 /*
 
-Average hash algorithm
+Implements the average hash algorithm from <archive link>
+
+This algorithm returns a hash based on the average pixel value.
+
+First, it grayscales and resizes the image down, using the 'hashLen'
+value. Then, it finds the average pixel value from this image.
+Finally, it iterates over the pixels, and if one is greater than the average,
+a '1' is appended to the returned result; a '0' otherwise.
 
 */
 
@@ -13,7 +20,7 @@ import (
 
 
 // Ahash calculates the average hash of an image. The image is first grayscaled,
-// then scaled down to "hashLen" for width and height. Then, the average value
+// then scaled down to "hashLen" for the width and height. Then, the average value
 // of the pixels is computed, and if a pixel is above the average, a 1 is appended
 // to the byte array; a 0 otherwise.
 func Ahash(img image.Image, hashLen int) ([]byte, error) {
