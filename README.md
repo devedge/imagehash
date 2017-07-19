@@ -1,9 +1,10 @@
 # imagehash
 [![Build Status](https://travis-ci.org/devedge/imagehash.svg?branch=master)](https://travis-ci.org/devedge/imagehash)
 [![GoDoc](https://godoc.org/github.com/devedge/imagehash?status.svg)](https://godoc.org/github.com/devedge/imagehash)
-[![Coverage](https://img.shields.io/badge/coverage-98.3-brightgreen.svg)](https://gocover.io/github.com/devedge/imagehash)
+[![Coverage](https://img.shields.io/badge/coverage-98.7-brightgreen.svg)](https://gocover.io/github.com/devedge/imagehash)
 
 Golang implementation of image hashing algorithms.
+
 
 ## Install:
 
@@ -12,14 +13,16 @@ Golang implementation of image hashing algorithms.
 
 ## Usage
 
-Open images using `OpenImg`, a wrapper around `imaging`'s image decoding function.
+There are currently two image hashing algorithms implemented:
+ - [dhash](#dhash) - difference/gradient hash
+ - [ahash](#ahash) - average hash
+
+To hash an image, it must be opened using `OpenImg`, a wrapper around `imaging`'s image decoding function.
 ```go
 src,err = imagehash.OpenImg("./testdata/lena_512.png")
 ```
 
-There are currently two image hashing algorithms implemented:
- - dhash - difference/gradient hash
- - ahash - average hash
+ - more general usage information can be found [in the example section](#examples)
 
 
 ## dhash
@@ -72,43 +75,6 @@ func main() {
   fmt.Println("Vertical dhash:  ", hex.EncodeToString(hashV))
 }
 ```
-<br>
-
-The Hamming distance between two byte arrays can be determined using a package like [hamming](https://github.com/steakknife/hamming):
-
-```go
-package main
-
-import (
-  "fmt"
-  "encoding/hex"
-  "github.com/devedge/imagehash"
-  "github.com/steakknife/hamming"
-)
-
-func main() {
-  src512,_ := imagehash.OpenImg("./testdata/lena_512.png")
-  src256,_ := imagehash.OpenImg("./testdata/lena_256.png")
-  srcInv,_ := imagehash.OpenImg("./testdata/lena_inverted_512.png")
-
-  hash512,_ := imagehash.Dhash(src512, 8)
-  hash256,_ := imagehash.Dhash(src256, 8)
-  hashInv,_ := imagehash.Dhash(srcInv, 8)
-
-  // Hamming distance of 0, since the images are simply different sizes
-  fmt.Println("'lena_512.png' dhash:", hex.EncodeToString(hash512))
-  fmt.Println("'lena_256.png' dhash:", hex.EncodeToString(hash256))
-  fmt.Println("The Hamming distance between these:", hamming.Bytes(hash512, hash256))
-
-  fmt.Println()
-
-  // Completely different dhash, since an inverted image has a completely
-  // different gradient colorscheme
-  fmt.Println("'lena_512.png' dhash:         ", hex.EncodeToString(hash512))
-  fmt.Println("'lena_inverted_512.png' dhash:", hex.EncodeToString(hashInv))
-  fmt.Println("The Hamming distance between these:", hamming.Bytes(hash512, hashInv))
-}
-```
 
 #### Implementation:
 
@@ -137,15 +103,50 @@ Conversely, to obtain a vertical diff, the image would be scaled down to `8x9px`
 
 This algorithm returns a hash based on the average pixel value.
 
-First, it grayscales and resizes the image down, using the 'hashLen'
-value. Then, it finds the average pixel value from this image.
-Finally, it iterates over the pixels, and if one is greater than the average,
-a '1' is appended to the returned result; a '0' otherwise.
+As with dhash, it also grayscales and resizes the image down, using the 'hashLen' value. Then, it finds the average value of the resultant pixels. Finally, it iterates over the pixels, and if one is greater than the average, a `1` is appended to the returned result; a `0` otherwise.
 
 
 ```go
 // The hash is returned as a byte array
 hash,err := imagehash.Ahash(src, hashLen)
+```
+
+
+## Examples
+
+The Hamming distance between two byte arrays can be determined using a package like [hamming](https://github.com/steakknife/hamming):
+
+```go
+package main
+
+import (
+  "fmt"
+  "encoding/hex"
+  "github.com/devedge/imagehash"
+  "github.com/steakknife/hamming"
+)
+
+func main() {
+  src512,_ := imagehash.OpenImg("./testdata/lena_512.png")
+  src256,_ := imagehash.OpenImg("./testdata/lena_256.png")
+  srcInv,_ := imagehash.OpenImg("./testdata/lena_inverted_512.png")
+
+  hash512,_ := imagehash.Dhash(src512, 8)
+  hash256,_ := imagehash.Dhash(src256, 8)
+  hashInv,_ := imagehash.Dhash(srcInv, 8)
+
+  // Hamming distance of 0, since the images are simply different sizes
+  fmt.Println("'lena_512.png' dhash:", hex.EncodeToString(hash512))
+  fmt.Println("'lena_256.png' dhash:", hex.EncodeToString(hash256))
+  fmt.Println("The Hamming distance between these:", hamming.Bytes(hash512, hash256))
+  fmt.Println()
+
+  // Completely different dhash, since an inverted image has a completely
+  // different gradient colorscheme
+  fmt.Println("'lena_512.png' dhash:         ", hex.EncodeToString(hash512))
+  fmt.Println("'lena_inverted_512.png' dhash:", hex.EncodeToString(hashInv))
+  fmt.Println("The Hamming distance between these:", hamming.Bytes(hash512, hashInv))
+}
 ```
 
 
