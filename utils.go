@@ -17,8 +17,8 @@ import (
 )
 
 
-// OpenImg() is a wrapper aroung the Open() function from 'imaging'.
-// Open() opens & encodes an image from the filesystem, which dhash() is
+// OpenImg is a wrapper aroung the Open function from 'imaging'.
+// Open opens & encodes an image from the filesystem, which dhash is
 // based upon.
 func OpenImg(fp string) (image.Image, error) {
   return imaging.Open(fp)

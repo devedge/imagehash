@@ -26,7 +26,10 @@ import (
 func TestWhiteDhash(t *testing.T)  {
   src,_ := OpenImg("./testdata/white_512.png")
   hash,err := Dhash(src, 8)
-  exp := make([]byte, 16) // initialize a byte array full of zeros
+
+  // initialize a byte array full of zeros. This one is twice as large since
+  // Dhash has a length 8 * 8
+  exp := make([]byte, 16)
 
   if bytes.Compare(exp, hash) != 0 {
     t.Errorf("white dhash test [%x] failed: [%x]", exp, hash)
@@ -97,7 +100,7 @@ func TestDhashVerticalZeroHashLen(t *testing.T) {
 // Test that the lena_512.png image returns the expected result.
 // The value of 'exp' has already been manually computed for the
 // horizontal gradient.
-func TestLenaHash(t *testing.T) {
+func TestLenaDhashHorizontal(t *testing.T) {
   src,_ := OpenImg("./testdata/lena_512.png")
   hash,err := DhashHorizontal(src, 8)
   exp := []byte{0x76, 0x70, 0x79, 0x5b, 0x33, 0x13, 0x5a, 0x38}
@@ -111,7 +114,7 @@ func TestLenaHash(t *testing.T) {
 
 
 // Test that lena_512.png and lena_256.png return identical dhash results.
-func TestSimilarLenaDash(t *testing.T)  {
+func TestSimilarLenaDhash(t *testing.T)  {
   lena512,_ := OpenImg("./testdata/lena_512.png")
   lena256,_ := OpenImg("./testdata/lena_256.png")
   hashlena512,err1 := Dhash(lena512, 8)
