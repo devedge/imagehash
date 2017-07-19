@@ -13,8 +13,6 @@ Finally, the gradient difference is calculated. If the current pixel is
 less than the next one, a '1' is appended to the BitArray. Otherwise,
 a '0' is appended.
 
-TODO: consider changing hashLen to reflect the length of the hash,
-  instead of the length of the downscaled image
 TODO Phash? Every new package gets a branch until testing is done
 TODO Benchmarks for every algorithm
 
@@ -28,7 +26,7 @@ import (
 )
 
 
-// Dhash calculates the horizontal and vertical gradient hashes seperately, then
+// Dhash calculates the horizontal and vertical gradient hashes separately, then
 // concatenates then to return one result as: <horizontal><vertical>.
 // 'img' is an Image object returned by opening an image file using OpenImg().
 // 'hashLen' is the size that the image will be shrunk to. It must be a non-zero multiple of 8.

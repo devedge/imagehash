@@ -3,22 +3,47 @@
 [![GoDoc](https://godoc.org/github.com/devedge/imagehash?status.svg)](https://godoc.org/github.com/devedge/imagehash)
 [![Coverage](https://img.shields.io/badge/coverage-98.3-brightgreen.svg)](https://gocover.io/github.com/devedge/imagehash)
 
-Golang implementation of image hashing algorithms
+Golang implementation of image hashing algorithms.
 
-
-## dhash
-This is an implementation of the `dhash` algorithm [found here](http://archive.is/NFLVW) (archived link), and also [implemented in Python  here](https://github.com/JohannesBuchner/imagehash).
-It depends on the `imaging` Go package [found here](https://github.com/disintegration/imaging) for basic image transformation operations.
-
-
-The `dhash` algorithm generates a nearly unique signature for an image, based on the gradient difference between pixels.
-It is used to determine the similarity between two images. Similar images will have a nearly identical hash result, while different images will not.
-
-#### Install:
+## Install:
 
 `go get -u github.com/devedge/imagehash`
 
-#### Usage:
+
+## Usage
+
+Open images using `OpenImg`, a wrapper around `imaging`'s image decoding function.
+```go
+src,err = imagehash.OpenImg("./testdata/lena_512.png")
+```
+
+There are currently two image hashing algorithms implemented:
+ - dhash - difference/gradient hash
+ - ahash - average hash
+
+
+## dhash
+
+This is an implementation of the `dhash` algorithm [found here](http://archive.is/NFLVW) (archived link), and also [implemented in Python  here](https://github.com/JohannesBuchner/imagehash).
+
+It generates a unique signature for an image based on the gradient difference between pixels.
+
+
+```go
+// The hashes are returned as byte arrays
+//
+// Calculate both horizontal & vertical gradients, then return them
+// concatenated together as <horizontal><vertical>
+hash,err  := imagehash.Dhash(src, hashLen)
+
+// Calculate only the horizontal gradient difference
+hashH,err := imagehash.DhashHorizontal(src, hashLen)
+
+// Calculate only the vertical gradient difference
+hashV,err := imagehash.DhashVertical(src, hashLen)
+```
+
+#### Using dhash:
 
 ```go
 package main
@@ -30,31 +55,20 @@ import (
 )
 
 func main() {
-  // OpenImg() uses the image opening function found in 'imaging'
   src,_ := imagehash.OpenImg("./testdata/lena_512.png")
 
   // The length of a downscaled side. It must be > 8, and
   // (hashLen * hashLen) must be a multiple of 8
-  //
+  hashLen := 8
   // A value of 8 will return 64 bits, or 8 bytes / 16 hex characters
   // (64 bits = 8 bits length * 8 bits width)
-  hashLen := 8
 
-  // Calculate both horizontal and vertical diffs, then concatenate
-  // and return them as: <horizontal diff><vertical diff>
-  hash,err := imagehash.Dhash(src, hashLen)
-  if err != nil {
-    // Catch an error that may be thrown
-  }
-  fmt.Println("dhash:           ", hex.EncodeToString(hash))
-
-  // Calculate a horizontal gradient diff. 'src' is an 'image.Image'
-  // The returned value is of type []byte
+  hash,_ := imagehash.Dhash(src, hashLen)
   hashH,_ := imagehash.DhashHorizontal(src, hashLen)
-  fmt.Println("Horizontal dhash:", hex.EncodeToString(hashH))
-
-  // Calculate a vertical gradient diff
   hashV,_ := imagehash.DhashVertical(src, hashLen)
+
+  fmt.Println("dhash:           ", hex.EncodeToString(hash))
+  fmt.Println("Horizontal dhash:", hex.EncodeToString(hashH))
   fmt.Println("Vertical dhash:  ", hex.EncodeToString(hashV))
 }
 ```
@@ -118,5 +132,22 @@ Which can also be represented in hex as `7670795b33135a38` using `hex.EncodeToSt
 
 Conversely, to obtain a vertical diff, the image would be scaled down to `8x9px`, and the diff matrix would be the result of `pixel[y] < pixel[y+1]`.
 
-#### Dependencies:
+
+## ahash
+
+This algorithm returns a hash based on the average pixel value.
+
+First, it grayscales and resizes the image down, using the 'hashLen'
+value. Then, it finds the average pixel value from this image.
+Finally, it iterates over the pixels, and if one is greater than the average,
+a '1' is appended to the returned result; a '0' otherwise.
+
+
+```go
+// The hash is returned as a byte array
+hash,err := imagehash.Ahash(src, hashLen)
+```
+
+
+## Dependencies:
 * [imaging](https://github.com/disintegration/imaging) - Simple Go image processing package
