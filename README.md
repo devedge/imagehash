@@ -19,7 +19,7 @@ There are currently two image hashing algorithms implemented:
 
 To hash an image, it must be opened using `OpenImg`, a wrapper around `imaging`'s image decoding function.
 ```go
-src,err = imagehash.OpenImg("./testdata/lena_512.png")
+src,err := imagehash.OpenImg("./testdata/lena_512.png")
 ```
 
  - more general usage information can be found [in the example section](#examples)
