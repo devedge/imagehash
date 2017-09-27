@@ -12,14 +12,13 @@ Usage:
 package imagehash
 
 import (
-  "image"
-  "github.com/disintegration/imaging"
+	"github.com/disintegration/imaging"
+	"image"
 )
-
 
 // OpenImg is a wrapper aroung the Open function from 'imaging'.
 // Open opens & encodes an image from the filesystem, which dhash is
 // based upon.
 func OpenImg(fp string) (image.Image, error) {
-  return imaging.Open(fp)
+	return imaging.Open(fp)
 }
